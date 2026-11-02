@@ -16,9 +16,9 @@ export default function BookCover({
   if (!src || failed) {
     return (
       <div
-        className={`flex items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700 p-2 text-center text-xs font-semibold text-white ${className}`}
+        className={`flex items-end bg-secondary-soft p-2 text-left text-xs font-semibold leading-tight text-secondary-ink ${className}`}
       >
-        {title.slice(0, 40)}
+        <span className="line-clamp-3">{title}</span>
       </div>
     );
   }

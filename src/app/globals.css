@@ -1,6 +1,67 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   Bento design tokens (from .claude/skills/bento/SKILL.md)
+   primary #FAD4C0 · secondary #80A1C1 · surface #FFF5E6 · text #111827
+   success #16A34A · warning #D97706 · danger #DC2626
+   Type scale 12/14/16/20/24/32 · spacing 4/8/12/16/24/32
+------------------------------------------------------------------- */
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-primary: #fad4c0;
+  --color-primary-strong: #f6bfa3; /* hover / pressed */
+  --color-primary-soft: #fde9de;
+  --color-secondary: #80a1c1;
+  --color-secondary-soft: #dbe5ef;
+  --color-secondary-ink: #3d5c7a; /* AA text on cream */
+  --color-surface: #fff5e6;
+  --color-tile: #ffffff;
+  --color-ink: #111827;
+  --color-muted: #4b5563; /* AA on white & cream */
+  --color-line: #f0e2cc;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+/* Keyboard-first: always-visible focus ring */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-secondary-ink);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+@utility tile {
+  @apply rounded-[20px] border border-line bg-tile p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)];
+}
+@utility label-caps {
+  @apply font-mono text-xs font-medium tracking-wider text-muted uppercase;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-primary text-ink hover:bg-primary-strong active:bg-primary-strong;
+}
+@utility btn-dark {
+  @apply btn bg-ink text-white hover:bg-gray-800;
+}
+@utility btn-ghost {
+  @apply btn border border-line bg-tile text-ink hover:bg-surface;
+}
+@utility btn-danger {
+  @apply btn border border-red-200 bg-tile text-danger hover:bg-red-50;
+}
+@utility field {
+  @apply mt-2 w-full rounded-xl border border-line bg-surface/60 px-4 py-3 text-base text-ink placeholder:text-muted/70 focus:border-secondary focus:bg-white;
+}
+@utility field-error {
+  @apply border-danger bg-red-50/40;
 }

@@ -15,14 +15,14 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   if (!ready || !session) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-slate-500">
+      <div role="status" className="flex min-h-screen items-center justify-center text-muted">
         Loading…
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <Navbar name={session.name} />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
     </div>

@@ -14,12 +14,11 @@ function EditBook() {
 
   if (!book) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center">
-        <p className="text-slate-600">This book doesn&apos;t exist or was deleted.</p>
-        <Link href="/dashboard" className="mt-4 inline-block font-medium text-indigo-600 hover:underline">
-          Back to dashboard
-        </Link>
-      </div>
+      <section className="tile py-16 text-center">
+        <p aria-hidden className="text-4xl">📕</p>
+        <p className="mt-3 font-semibold">This book doesn&apos;t exist or was deleted.</p>
+        <Link href="/dashboard" className="btn-dark mt-5">Back to dashboard</Link>
+      </section>
     );
   }
 
@@ -28,10 +27,10 @@ function EditBook() {
 
   return (
     <>
-      <Link href={`/books/${book.id}`} className="text-sm font-medium text-indigo-600 hover:underline">
+      <Link href={`/books/${book.id}`} className="text-sm font-semibold text-secondary-ink hover:underline">
         ← Back to book
       </Link>
-      <h1 className="mt-3 mb-6 text-2xl font-bold text-slate-900">Edit “{book.title}”</h1>
+      <h1 className="mt-3 mb-6 text-[32px] leading-tight font-bold tracking-tight">Edit “{book.title}”</h1>
       <BookForm
         initial={initial}
         submitLabel="Save changes"

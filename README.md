@@ -20,7 +20,7 @@ The credentials are also shown on the login page, with a one-click **Use demo cr
 - **Filter** by category and availability (available / out of stock)
 - Form validation (ISBN, copies, year) and live cover preview
 - 8 sample books preloaded, plus a **Reset demo data** button
-- Responsive layout, indigo & white LibraryHub branding
+- Responsive **Bento** design: modular tile grid, peach `#FAD4C0` / slate-blue `#80A1C1` on cream `#FFF5E6`, Inter + JetBrains Mono, WCAG AA contrast and visible keyboard focus
 
 ### Book fields
 Title · Author · ISBN · Category · Total copies · Available copies · Published year · Cover image URL
@@ -50,6 +50,10 @@ src/
     seed.ts                  # Sample books
     types.ts                 # Book type & categories
 ```
+
+## 🎨 Design system
+
+The UI follows the **Bento** design skill from [bergside/awesome-design-skills](https://github.com/bergside/awesome-design-skills), installed at `.claude/skills/bento/` (`SKILL.md` + `DESIGN.md`). Tokens live in `src/app/globals.css`.
 
 ## 🛠 Tech stack
 

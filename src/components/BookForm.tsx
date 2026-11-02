@@ -70,111 +70,113 @@ export default function BookForm({
     }
   };
 
-  const input =
-    "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none";
-
   const Field = ({
     label,
     name,
+    hint,
     children,
   }: {
     label: string;
     name: keyof BookInput;
-    children: React.ReactNode;
-  }) => (
-    <label className="block">
-      <span className="text-sm font-medium text-slate-700">{label}</span>
-      {children}
-      {errors[name] && (
-        <span className="mt-1 block text-xs text-red-600">{errors[name]}</span>
-      )}
-    </label>
-  );
+    hint?: string;
+    children: (props: { id: string; className: string; "aria-invalid": boolean; "aria-describedby"?: string }) => React.ReactNode;
+  }) => {
+    const id = `field-${name}`;
+    const err = errors[name];
+    return (
+      <div>
+        <label htmlFor={id} className="text-sm font-semibold text-ink">
+          {label}
+        </label>
+        {children({
+          id,
+          className: `field ${err ? "field-error" : ""}`,
+          "aria-invalid": Boolean(err),
+          "aria-describedby": err ? `${id}-error` : hint ? `${id}-hint` : undefined,
+        })}
+        {err ? (
+          <p id={`${id}-error`} className="mt-1.5 text-xs font-medium text-danger">
+            {err}
+          </p>
+        ) : hint ? (
+          <p id={`${id}-hint`} className="mt-1.5 text-xs text-muted">
+            {hint}
+          </p>
+        ) : null}
+      </div>
+    );
+  };
+
+  const num = (n: number) => (Number.isNaN(n) ? "" : n);
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="grid gap-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:grid-cols-[1fr_180px]"
-      noValidate
-    >
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          {Field({
-            label: "Title *",
-            name: "title",
-            children: (
-              <input className={input} value={values.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. The Alchemist" />
-            ),
-          })}
-        </div>
-        {Field({
-          label: "Author *",
-          name: "author",
-          children: (
-            <input className={input} value={values.author} onChange={(e) => set("author", e.target.value)} placeholder="e.g. Paulo Coelho" />
-          ),
-        })}
-        {Field({
-          label: "ISBN *",
-          name: "isbn",
-          children: (
-            <input className={input} value={values.isbn} onChange={(e) => set("isbn", e.target.value)} placeholder="10 or 13 digits" />
-          ),
-        })}
-        {Field({
-          label: "Category",
-          name: "category",
-          children: (
-            <select className={input} value={values.category} onChange={(e) => set("category", e.target.value)}>
+    <form onSubmit={handleSubmit} noValidate className="grid gap-4 lg:grid-cols-3">
+      {/* Details tile */}
+      <section aria-labelledby="details-h" className="tile lg:col-span-2">
+        <h2 id="details-h" className="label-caps">Book details</h2>
+        <div className="mt-4 grid gap-5 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            {Field({ label: "Title", name: "title", children: (p) => (
+              <input {...p} value={values.title} onChange={(e) => set("title", e.target.value)} placeholder="e.g. The Alchemist" />
+            ) })}
+          </div>
+          {Field({ label: "Author", name: "author", children: (p) => (
+            <input {...p} value={values.author} onChange={(e) => set("author", e.target.value)} placeholder="e.g. Paulo Coelho" />
+          ) })}
+          {Field({ label: "ISBN", name: "isbn", hint: "10 or 13 digits, dashes are fine", children: (p) => (
+            <input {...p} inputMode="numeric" value={values.isbn} onChange={(e) => set("isbn", e.target.value)} placeholder="9780062315007" />
+          ) })}
+          {Field({ label: "Category", name: "category", children: (p) => (
+            <select {...p} value={values.category} onChange={(e) => set("category", e.target.value)}>
               {CATEGORIES.map((c) => (
                 <option key={c}>{c}</option>
               ))}
             </select>
-          ),
-        })}
-        {Field({
-          label: "Published year",
-          name: "publishedYear",
-          children: (
-            <input type="number" className={input} value={Number.isNaN(values.publishedYear) ? "" : values.publishedYear} onChange={(e) => set("publishedYear", parseInt(e.target.value, 10))} />
-          ),
-        })}
-        {Field({
-          label: "Total copies",
-          name: "totalCopies",
-          children: (
-            <input type="number" min={0} className={input} value={Number.isNaN(values.totalCopies) ? "" : values.totalCopies} onChange={(e) => set("totalCopies", parseInt(e.target.value, 10))} />
-          ),
-        })}
-        {Field({
-          label: "Available copies",
-          name: "availableCopies",
-          children: (
-            <input type="number" min={0} className={input} value={Number.isNaN(values.availableCopies) ? "" : values.availableCopies} onChange={(e) => set("availableCopies", parseInt(e.target.value, 10))} />
-          ),
-        })}
-        <div className="sm:col-span-2">
-          {Field({
-            label: "Cover image URL (optional)",
-            name: "coverUrl",
-            children: (
-              <input className={input} value={values.coverUrl} onChange={(e) => set("coverUrl", e.target.value)} placeholder="https://…" />
-            ),
-          })}
+          ) })}
+          {Field({ label: "Published year", name: "publishedYear", children: (p) => (
+            <input {...p} type="number" value={num(values.publishedYear)} onChange={(e) => set("publishedYear", parseInt(e.target.value, 10))} />
+          ) })}
         </div>
-        <div className="flex gap-3 sm:col-span-2">
-          <button type="submit" className="rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white shadow-sm hover:bg-indigo-700">
-            {submitLabel}
-          </button>
-          <Link href={cancelHref} className="rounded-lg border border-slate-300 px-5 py-2.5 font-medium text-slate-700 hover:bg-slate-100">
-            Cancel
-          </Link>
+      </section>
+
+      {/* Cover tile */}
+      <section aria-labelledby="cover-h" className="tile flex flex-col bg-primary-soft">
+        <h2 id="cover-h" className="label-caps">Cover</h2>
+        <BookCover key={values.coverUrl} src={values.coverUrl} title={values.title || "New book"} className="mx-auto mt-4 aspect-[2/3] w-36 rounded-xl shadow-md" />
+        <div className="mt-4">
+          {Field({ label: "Image URL (optional)", name: "coverUrl", children: (p) => (
+            <input {...p} type="url" value={values.coverUrl} onChange={(e) => set("coverUrl", e.target.value)} placeholder="https://…" />
+          ) })}
         </div>
-      </div>
-      <div>
-        <p className="mb-2 text-sm font-medium text-slate-700">Cover preview</p>
-        <BookCover key={values.coverUrl} src={values.coverUrl} title={values.title || "New book"} className="aspect-[2/3] w-full rounded-lg shadow" />
-      </div>
+      </section>
+
+      {/* Copies tile */}
+      <section aria-labelledby="copies-h" className="tile bg-secondary-soft/60 lg:col-span-2">
+        <h2 id="copies-h" className="label-caps">Inventory</h2>
+        <div className="mt-4 grid gap-5 sm:grid-cols-2">
+          {Field({ label: "Total copies", name: "totalCopies", children: (p) => (
+            <input {...p} type="number" min={0} value={num(values.totalCopies)} onChange={(e) => set("totalCopies", parseInt(e.target.value, 10))} />
+          ) })}
+          {Field({ label: "Available copies", name: "availableCopies", hint: "Can't be more than total copies", children: (p) => (
+            <input {...p} type="number" min={0} value={num(values.availableCopies)} onChange={(e) => set("availableCopies", parseInt(e.target.value, 10))} />
+          ) })}
+        </div>
+      </section>
+
+      {/* Actions tile */}
+      <section className="tile flex flex-col justify-center gap-3">
+        <button type="submit" className="btn-dark w-full !py-3">
+          {submitLabel}
+        </button>
+        <Link href={cancelHref} className="btn-ghost w-full !py-3">
+          Cancel
+        </Link>
+        {Object.keys(errors).length > 0 && (
+          <p role="alert" className="text-center text-xs font-medium text-danger">
+            Fix the highlighted fields to continue.
+          </p>
+        )}
+      </section>
     </form>
   );
 }
