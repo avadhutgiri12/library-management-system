@@ -59,7 +59,7 @@ function Dashboard() {
     <>
       <h1 className="sr-only">Dashboard</h1>
 
-      {/* ---------- Bento stats grid ---------- */}
+      {/* ---------- Stats grid ---------- */}
       <div className="grid auto-rows-[minmax(120px,auto)] grid-cols-2 gap-4 lg:grid-cols-4">
         {/* Hero: total books (2x2) */}
         <section className="tile col-span-2 row-span-2 flex flex-col justify-between bg-primary">

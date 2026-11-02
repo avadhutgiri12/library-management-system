@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   Bento design tokens (from .claude/skills/bento/SKILL.md)
-   primary #FAD4C0 · secondary #80A1C1 · surface #FFF5E6 · text #111827
+   Minimal design tokens (from .claude/skills/minimal/SKILL.md)
+   primary #FAD4C0 · secondary #80A1C1 · surface #FFF5E6 · text #0c0c09
    success #16A34A · warning #D97706 · danger #DC2626
    Type scale 12/14/16/20/24/32 · spacing 4/8/12/16/24/32
 ------------------------------------------------------------------- */
 @theme inline {
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-opensans);
+  --font-mono: var(--font-inconsolata);
 
-  --color-primary: #fad4c0;
-  --color-primary-strong: #f6bfa3; /* hover / pressed */
-  --color-primary-soft: #fde9de;
-  --color-secondary: #80a1c1;
-  --color-secondary-soft: #dbe5ef;
-  --color-secondary-ink: #3d5c7a; /* AA text on cream */
-  --color-surface: #fff5e6;
+  --color-primary: #ecece7;
+  --color-primary-strong: #e0e0da; /* hover / pressed */
+  --color-primary-soft: #f4f4f1;
+  --color-secondary: #312c85;
+  --color-secondary-soft: #e9e8f4;
+  --color-secondary-ink: #312c85; /* AA text on cream */
+  --color-surface: #f4f4f1;
   --color-tile: #ffffff;
-  --color-ink: #111827;
-  --color-muted: #4b5563; /* AA on white & cream */
-  --color-line: #f0e2cc;
+  --color-ink: #0c0c09;
+  --color-muted: #55554f; /* AA on white & cream */
+  --color-line: #e4e4df;
   --color-success: #16a34a;
   --color-warning: #d97706;
   --color-danger: #dc2626;
@@ -39,7 +39,7 @@ body {
 }
 
 @utility tile {
-  @apply rounded-[20px] border border-line bg-tile p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)];
+  @apply rounded-lg border border-line bg-tile p-6;
 }
 @utility label-caps {
   @apply font-mono text-xs font-medium tracking-wider text-muted uppercase;
