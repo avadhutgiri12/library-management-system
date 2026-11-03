@@ -21,7 +21,7 @@ The credentials are also shown on the login page, with a one-click **Use demo cr
 - **Filter** by category and availability (available / out of stock)
 - Form validation (copies, year) and live cover preview
 - 8 sample books preloaded, plus a **Reset demo data** button
-- Responsive **Minimal** design: modular tile grid, peach `#FAD4C0` / slate-blue `#80A1C1` on cream `#FFF5E6`, Inter + JetBrains Mono, WCAG AA contrast and visible keyboard focus
+- Responsive **Minimal** design: modular tile grid, near-black `#0C0C09` / deep indigo `#312C85` on off-white `#F4F4F1`, Open Sans + Inconsolata, WCAG AA contrast and visible keyboard focus
 
 ### Book fields
 Title · Author · Category · Total copies · Available copies · Published year · Cover image URL
