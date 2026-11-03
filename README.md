@@ -16,14 +16,15 @@ The credentials are also shown on the login page, with a one-click **Use demo cr
 - **Login page** with demo credentials (admin role)
 - **Dashboard** showing total books, total copies, available copies and out-of-stock titles
 - **Add, view, edit and delete** books (with confirmation before delete)
-- **Search** by title, author or ISBN
+- **Search** by title or author
+- **Bulk import** from Excel (.xlsx/.xls) or CSV: upload a file and every row is added automatically (Title and Author required; Category, Total Copies, Available Copies, Published Year, Cover URL optional). A sample CSV is downloadable from the import dialog.
 - **Filter** by category and availability (available / out of stock)
-- Form validation (ISBN, copies, year) and live cover preview
+- Form validation (copies, year) and live cover preview
 - 8 sample books preloaded, plus a **Reset demo data** button
 - Responsive **Minimal** design: modular tile grid, peach `#FAD4C0` / slate-blue `#80A1C1` on cream `#FFF5E6`, Inter + JetBrains Mono, WCAG AA contrast and visible keyboard focus
 
 ### Book fields
-Title · Author · ISBN · Category · Total copies · Available copies · Published year · Cover image URL
+Title · Author · Category · Total copies · Available copies · Published year · Cover image URL
 
 ## 🚀 Getting started
 

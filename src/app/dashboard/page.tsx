@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import AuthGuard from "@/components/AuthGuard";
 import BookCover from "@/components/BookCover";
+import ImportBooks from "@/components/ImportBooks";
 import StatusBadge from "@/components/StatusBadge";
 import { deleteBook, resetDemoData, useBooks } from "@/lib/store";
 import type { Book } from "@/lib/types";
@@ -15,6 +16,7 @@ function Dashboard() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [availability, setAvailability] = useState<Availability>("all");
+  const [importOpen, setImportOpen] = useState(false);
 
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(books.map((b) => b.category))).sort()],
@@ -27,8 +29,7 @@ function Dashboard() {
       const matchesQuery =
         !q ||
         b.title.toLowerCase().includes(q) ||
-        b.author.toLowerCase().includes(q) ||
-        b.isbn.toLowerCase().includes(q);
+        b.author.toLowerCase().includes(q);
       const matchesCategory = category === "All" || b.category === category;
       const matchesAvailability =
         availability === "all" ||
@@ -104,7 +105,7 @@ function Dashboard() {
         </section>
 
         {/* Availability meter */}
-        <section className="tile col-span-2 bg-secondary-soft lg:col-span-4">
+        <section className="tile col-span-2 bg-secondary-soft lg:col-span-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="label-caps !text-secondary-ink">Shelf availability</h2>
             <p className="text-sm text-secondary-ink">
@@ -122,7 +123,24 @@ function Dashboard() {
             <div className="h-full rounded-full bg-secondary" style={{ width: `${stats.pct}%` }} />
           </div>
         </section>
+
+        {/* Import from Excel / CSV */}
+        <button
+          type="button"
+          onClick={() => setImportOpen(true)}
+          className="tile group col-span-2 flex items-center justify-between gap-3 text-left transition-colors hover:bg-primary lg:col-span-1"
+        >
+          <span>
+            <span className="label-caps">Bulk import</span>
+            <span className="mt-2 block text-lg leading-snug font-bold">Add books from Excel or CSV</span>
+          </span>
+          <span aria-hidden className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-lg text-white transition-transform group-hover:-translate-y-0.5">
+            ↑
+          </span>
+        </button>
       </div>
+
+      {importOpen && <ImportBooks onClose={() => setImportOpen(false)} />}
 
       {/* ---------- Search & filters ---------- */}
       <section aria-label="Search and filter books" className="tile mt-4 !p-4">
@@ -133,7 +151,7 @@ function Dashboard() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by title, author or ISBN"
+            placeholder="Search by title or author"
             className="field !mt-0 flex-1"
           />
           <label htmlFor="category" className="sr-only">Filter by category</label>
@@ -215,7 +233,7 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              <dl className="mt-4 grid grid-cols-3 gap-2 rounded-xl bg-surface p-3 text-center">
+              <dl className="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-surface p-3 text-center">
                 <div>
                   <dt className="label-caps !text-[10px]">Year</dt>
                   <dd className="text-sm font-semibold">{b.publishedYear}</dd>
@@ -223,10 +241,6 @@ function Dashboard() {
                 <div>
                   <dt className="label-caps !text-[10px]">Copies</dt>
                   <dd className="text-sm font-semibold">{b.availableCopies}/{b.totalCopies}</dd>
-                </div>
-                <div className="min-w-0">
-                  <dt className="label-caps !text-[10px]">ISBN</dt>
-                  <dd className="truncate font-mono text-xs font-medium" title={b.isbn}>…{b.isbn.slice(-4)}</dd>
                 </div>
               </dl>
               <div className="mt-3 grid grid-cols-3 gap-2">

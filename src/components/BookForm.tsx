@@ -8,7 +8,6 @@ import BookCover from "./BookCover";
 const EMPTY: BookInput = {
   title: "",
   author: "",
-  isbn: "",
   category: "Fiction",
   totalCopies: 1,
   availableCopies: 1,
@@ -23,8 +22,6 @@ function validate(v: BookInput): Errors {
   const year = new Date().getFullYear();
   if (!v.title.trim()) e.title = "Title is required";
   if (!v.author.trim()) e.author = "Author is required";
-  if (!/^(\d{9}[\dXx]|\d{13})$/.test(v.isbn.replace(/[-\s]/g, "")))
-    e.isbn = "Enter a valid 10 or 13 digit ISBN";
   if (!Number.isInteger(v.totalCopies) || v.totalCopies < 0)
     e.totalCopies = "Must be 0 or more";
   if (!Number.isInteger(v.availableCopies) || v.availableCopies < 0)
@@ -64,7 +61,6 @@ export default function BookForm({
         ...values,
         title: values.title.trim(),
         author: values.author.trim(),
-        isbn: values.isbn.replace(/[-\s]/g, ""),
         coverUrl: values.coverUrl.trim(),
       });
     }
@@ -122,9 +118,6 @@ export default function BookForm({
           </div>
           {Field({ label: "Author", name: "author", children: (p) => (
             <input {...p} value={values.author} onChange={(e) => set("author", e.target.value)} placeholder="e.g. Paulo Coelho" />
-          ) })}
-          {Field({ label: "ISBN", name: "isbn", hint: "10 or 13 digits, dashes are fine", children: (p) => (
-            <input {...p} inputMode="numeric" value={values.isbn} onChange={(e) => set("isbn", e.target.value)} placeholder="9780062315007" />
           ) })}
           {Field({ label: "Category", name: "category", children: (p) => (
             <select {...p} value={values.category} onChange={(e) => set("category", e.target.value)}>

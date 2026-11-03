@@ -81,11 +81,7 @@ function BookDetails() {
 
         {/* Meta */}
         <section className="tile col-span-2 lg:col-span-4">
-          <dl className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <dt className="label-caps">ISBN</dt>
-              <dd className="mt-1 font-mono text-base font-medium">{book.isbn}</dd>
-            </div>
+          <dl className="grid gap-6 sm:grid-cols-3">
             <div>
               <dt className="label-caps">Published</dt>
               <dd className="mt-1 text-base font-medium">{book.publishedYear}</dd>

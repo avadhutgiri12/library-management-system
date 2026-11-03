@@ -107,7 +107,7 @@ export default function LoginPage() {
       <section className="tile lg:col-span-4">
         <p aria-hidden className="text-2xl">🔎</p>
         <h3 className="mt-3 font-semibold">Instant search</h3>
-        <p className="mt-1 text-sm text-muted">Find any book by title, author or ISBN.</p>
+        <p className="mt-1 text-sm text-muted">Find any book by title or author.</p>
       </section>
       <section className="tile lg:col-span-3">
         <p aria-hidden className="text-2xl">📦</p>

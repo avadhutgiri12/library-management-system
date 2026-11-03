@@ -79,6 +79,21 @@ export function addBook(input: BookInput): Book {
   return book;
 }
 
+export function addBooks(inputs: BookInput[]): number {
+  const now = new Date().toISOString();
+  const stamp = Date.now();
+  const created: Book[] = inputs.map((input, i) => ({
+    ...input,
+    id: typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${stamp}-${i}`,
+    createdAt: now,
+    updatedAt: now,
+  }));
+  writeBooks([...created, ...readBooks()]);
+  return created.length;
+}
+
 export function updateBook(id: string, input: BookInput) {
   writeBooks(
     readBooks().map((b) =>
