@@ -17,7 +17,7 @@ The credentials are also shown on the login page, with a one-click **Use demo cr
 - **Dashboard** showing total books, total copies, available copies and out-of-stock titles
 - **Add, view, edit and delete** books (with confirmation before delete)
 - **Search** by title or author
-- **Bulk import** from Excel (.xlsx/.xls) or CSV: upload a file and every row is added automatically (Title and Author required; Category, Total Copies, Available Copies, Published Year, Cover URL optional). A sample CSV is downloadable from the import dialog.
+- **Bulk import** from Excel (.xlsx/.xls) or CSV: upload a file and every book is added automatically. Columns are recognised on their own from the headings (even odd ones like "Name of Book", "Writer", "Qty", "Yr" or typos) and from the data itself (years, copies, genres, cover links, names vs titles), in any order and even without a heading row. Serial no., ISBN, price and similar columns are ignored. The dialog shows which column was used for each field.
 - **Filter** by category and availability (available / out of stock)
 - Form validation (copies, year) and live cover preview
 - 8 sample books preloaded, plus a **Reset demo data** button

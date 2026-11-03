@@ -3,29 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { addBooks } from "@/lib/store";
 import { CATEGORIES, type BookInput } from "@/lib/types";
-
-/* Column names we accept (case, spaces and punctuation are ignored). */
-const ALIASES: Record<keyof BookInput, string[]> = {
-  title: ["title", "booktitle", "bookname", "name", "book"],
-  author: ["author", "authors", "writer", "authorname"],
-  category: ["category", "genre", "subject", "type"],
-  totalCopies: ["totalcopies", "total", "copies", "quantity", "qty", "stock"],
-  availableCopies: ["availablecopies", "available", "availablequantity", "instock"],
-  publishedYear: ["publishedyear", "year", "publicationyear", "published", "yearpublished"],
-  coverUrl: ["coverurl", "cover", "coverimage", "image", "imageurl", "thumbnail"],
-};
-
-const norm = (s: unknown) => String(s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
-
-function pick(row: Record<string, unknown>, key: keyof BookInput): string {
-  for (const col of Object.keys(row)) {
-    if (ALIASES[key].includes(norm(col))) {
-      const v = row[col];
-      if (v !== undefined && v !== null && String(v).trim() !== "") return String(v).trim();
-    }
-  }
-  return "";
-}
+import { detectColumns, FIELD_LABELS, type Detection, type Field } from "@/lib/detectColumns";
 
 function toInt(v: string): number | null {
   if (!v) return null;
@@ -33,38 +11,42 @@ function toInt(v: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
+const normCat = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 function matchCategory(v: string): string {
   if (!v) return "Other";
-  const hit = CATEGORIES.find((c) => norm(c) === norm(v));
-  return hit ?? v;
+  const hit = CATEGORIES.find((c) => normCat(c) === normCat(v) || normCat(c) === normCat(v).replace(/s$/, ""));
+  return hit ?? v.charAt(0).toUpperCase() + v.slice(1);
 }
 
 type Skipped = { row: number; reason: string };
-type Result = { fileName: string; added: number; skipped: Skipped[] };
+type Detected = { field: Field; column: string };
+type Result = { fileName: string; added: number; skipped: Skipped[]; detected: Detected[]; hasHeader: boolean };
 
-function rowsToBooks(rows: Record<string, unknown>[]) {
+function rowsToBooks(det: Detection) {
   const year = new Date().getFullYear();
+  const m = det.mapping;
+  const get = (r: string[], f: Field) => (m[f] === undefined ? "" : (r[m[f]!] ?? "").trim());
   const books: BookInput[] = [];
   const skipped: Skipped[] = [];
 
-  rows.forEach((row, i) => {
-    const rowNo = i + 2; // +1 for header, +1 for 1-based rows
-    const title = pick(row, "title");
-    const author = pick(row, "author");
-    if (!title && !author) return; // blank line, ignore quietly
+  det.dataRows.forEach((r, i) => {
+    const rowNo = i + (det.hasHeader ? 2 : 1);
+    const title = get(r, "title");
+    const author = get(r, "author");
+    if (!title && !author) return;
     if (!title) return skipped.push({ row: rowNo, reason: "Missing title" });
     if (!author) return skipped.push({ row: rowNo, reason: "Missing author" });
 
-    const total = Math.max(0, toInt(pick(row, "totalCopies")) ?? 1);
-    const availRaw = toInt(pick(row, "availableCopies"));
+    const total = Math.max(0, toInt(get(r, "totalCopies")) ?? 1);
+    const availRaw = toInt(get(r, "availableCopies"));
     const available = Math.min(total, Math.max(0, availRaw ?? total));
-    const yr = toInt(pick(row, "publishedYear"));
-    const cover = pick(row, "coverUrl");
+    const yr = toInt(get(r, "publishedYear"));
+    const cover = get(r, "coverUrl");
 
     books.push({
       title,
       author,
-      category: matchCategory(pick(row, "category")),
+      category: matchCategory(get(r, "category")),
       totalCopies: total,
       availableCopies: available,
       publishedYear: yr && yr >= 1000 && yr <= year ? yr : year,
@@ -116,17 +98,21 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
       const XLSX = await import("xlsx");
       const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
       const sheet = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: "", raw: false });
-      const { books, skipped } = rowsToBooks(rows);
+      const aoa = XLSX.utils.sheet_to_json<unknown[]>(sheet, { header: 1, defval: "", raw: false });
+      const det = detectColumns(aoa);
+      if (det.mapping.title === undefined || det.mapping.author === undefined) {
+        setError("Couldn't find a title and an author column in that file. Each book needs both.");
+        return;
+      }
+      const { books, skipped } = rowsToBooks(det);
       if (books.length === 0) {
-        setError(
-          skipped.length
-            ? "No books could be added. Every row is missing a title or author."
-            : "That file has no book rows. Make sure the first row has headers like Title and Author.",
-        );
+        setError(skipped.length ? "No books could be added. Every row is missing a title or author." : "That file has no book rows.");
       } else {
         addBooks(books);
-        setResult({ fileName: file.name, added: books.length, skipped });
+        const detected = (Object.keys(FIELD_LABELS) as Field[])
+          .filter((f) => det.mapping[f] !== undefined)
+          .map((f) => ({ field: f, column: det.headers[det.mapping[f]!] }));
+        setResult({ fileName: file.name, added: books.length, skipped, detected, hasHeader: det.hasHeader });
       }
     } catch {
       setError("Couldn't read that file. Check it's a valid Excel or CSV file.");
@@ -160,6 +146,18 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
               <p className="text-sm text-muted">
                 book{result.added === 1 ? "" : "s"} added from <span className="font-medium text-ink">{result.fileName}</span>
               </p>
+            </div>
+            <div className="mt-3 rounded-lg border border-gray-200 p-3 text-sm">
+              <p className="font-semibold">Columns recognised automatically</p>
+              <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                {result.detected.map((d) => (
+                  <div key={d.field} className="contents">
+                    <dt className="text-muted">{FIELD_LABELS[d.field]}</dt>
+                    <dd className="truncate font-medium">← {d.column}</dd>
+                  </div>
+                ))}
+              </dl>
+              {!result.hasHeader && <p className="mt-2 text-xs text-muted">No header row found, so columns were matched from their contents.</p>}
             </div>
             {result.skipped.length > 0 && (
               <div className="mt-3 rounded-lg border border-warning/40 p-3 text-sm">
@@ -211,10 +209,10 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
             )}
 
             <div className="mt-5 rounded-lg bg-surface p-4 text-sm">
-              <p className="font-semibold">Columns in the first row</p>
+              <p className="font-semibold">Any column layout works</p>
               <p className="mt-1 text-muted">
-                <span className="font-medium text-ink">Title</span> and <span className="font-medium text-ink">Author</span> are required.
-                Optional: Category, Total Copies, Available Copies, Published Year, Cover URL.
+                LibraryHub reads your headings and the data itself to find the <span className="font-medium text-ink">title</span>,{" "}
+                <span className="font-medium text-ink">author</span>, category, copies, year and cover link, in any order, even without a heading row.
               </p>
               <button onClick={downloadTemplate} className="mt-3 font-semibold text-secondary-ink underline">
                 Download sample CSV
