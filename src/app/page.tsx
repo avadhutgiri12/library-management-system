@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { PackageCheck, Search } from "lucide-react";
 import Logo from "@/components/Logo";
 import { DEMO_CREDENTIALS, login, useSession } from "@/lib/store";
 
@@ -29,29 +30,29 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="mx-auto grid min-h-screen max-w-6xl content-center gap-4 p-4 sm:p-6 lg:grid-cols-12 lg:grid-rows-[auto_auto_auto]">
-      {/* Hero tile */}
-      <section className="tile flex flex-col justify-between gap-10 bg-primary lg:col-span-7 lg:row-span-2 lg:p-10">
+    <main className="mx-auto grid min-h-screen max-w-6xl content-center gap-4 p-4 sm:p-6 lg:grid-cols-12">
+      {/* Hero */}
+      <section className="tile flex flex-col justify-between gap-12 bg-primary lg:col-span-7 lg:row-span-2 lg:p-10">
         <Logo size="lg" />
         <div>
-          <p className="label-caps !text-ink/70">Library management, simplified</p>
-          <h1 className="mt-3 text-[32px] leading-tight font-bold tracking-tight text-ink sm:text-5xl">
-            Every book, every copy, one tidy dashboard.
+          <p className="spine">Catalogue · Stock · Admin</p>
+          <h1 className="mt-4 max-w-xl text-4xl leading-[1.08] font-medium tracking-[-0.02em] text-ink sm:text-5xl">
+            Every book and every copy in one catalogue
           </h1>
-          <p className="mt-4 max-w-md text-base text-ink/80">
-            Add, update, search and track your whole collection with LibraryHub.
+          <p className="mt-4 max-w-md text-base leading-relaxed text-ink/75">
+            Add, edit and find titles, and see what&apos;s on the shelf before a reader asks
           </p>
         </div>
       </section>
 
-      {/* Sign-in tile */}
+      {/* Sign in */}
       <section aria-labelledby="signin-h" className="tile lg:col-span-5 lg:row-span-2 lg:p-8">
-        <h2 id="signin-h" className="text-2xl font-bold text-ink">Welcome back</h2>
-        <p className="mt-1 text-sm text-muted">Sign in to the admin dashboard.</p>
+        <h2 id="signin-h" className="text-2xl font-medium text-ink">Sign in</h2>
+        <p className="mt-1 text-sm text-muted">Admin dashboard</p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-5" noValidate>
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
           <div>
-            <label htmlFor="email" className="text-sm font-semibold">Email</label>
+            <label htmlFor="email" className="text-sm font-medium">Email</label>
             <input
               id="email"
               type="email"
@@ -63,39 +64,39 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="text-sm font-semibold">Password</label>
+            <label htmlFor="password" className="text-sm font-medium">Password</label>
             <input
               id="password"
               type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Password"
               className="field"
             />
           </div>
           {error && (
-            <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-danger">
+            <p role="alert" className="rounded-md bg-red-50 px-3 py-2.5 text-sm font-medium text-danger">
               {error}
             </p>
           )}
-          <button type="submit" className="btn-dark w-full !py-3 text-base">
+          <button type="submit" className="btn-dark !h-11 w-full text-[15px]">
             Sign in
           </button>
         </form>
       </section>
 
-      {/* Demo credentials tile */}
+      {/* Demo credentials */}
       <section aria-labelledby="demo-h" className="tile bg-secondary-soft lg:col-span-5">
-        <h2 id="demo-h" className="label-caps !text-secondary-ink">Demo credentials</h2>
+        <h2 id="demo-h" className="eyebrow !text-secondary-ink">Demo credentials</h2>
         <dl className="mt-3 space-y-2 text-sm">
           <div className="flex items-center justify-between gap-2">
             <dt className="text-muted">Email</dt>
-            <dd className="font-mono font-medium">{DEMO_CREDENTIALS.email}</dd>
+            <dd className="font-mono">{DEMO_CREDENTIALS.email}</dd>
           </div>
           <div className="flex items-center justify-between gap-2">
             <dt className="text-muted">Password</dt>
-            <dd className="font-mono font-medium">{DEMO_CREDENTIALS.password}</dd>
+            <dd className="font-mono">{DEMO_CREDENTIALS.password}</dd>
           </div>
         </dl>
         <button type="button" onClick={fillDemo} className="btn-ghost mt-4 w-full">
@@ -103,16 +104,16 @@ export default function LoginPage() {
         </button>
       </section>
 
-      {/* Feature tiles */}
+      {/* Features */}
       <section className="tile lg:col-span-4">
-        <p aria-hidden className="text-2xl">🔎</p>
-        <h3 className="mt-3 font-semibold">Instant search</h3>
-        <p className="mt-1 text-sm text-muted">Find any book by title or author.</p>
+        <Search size={18} strokeWidth={1.5} className="text-muted" aria-hidden />
+        <h3 className="mt-4 text-[15px] font-medium">Search</h3>
+        <p className="mt-1 text-sm text-muted">Find a book by title or author</p>
       </section>
       <section className="tile lg:col-span-3">
-        <p aria-hidden className="text-2xl">📦</p>
-        <h3 className="mt-3 font-semibold">Live stock</h3>
-        <p className="mt-1 text-sm text-muted">See what&apos;s available at a glance.</p>
+        <PackageCheck size={18} strokeWidth={1.5} className="text-muted" aria-hidden />
+        <h3 className="mt-4 text-[15px] font-medium">Live stock</h3>
+        <p className="mt-1 text-sm text-muted">Copies on the shelf, per title</p>
       </section>
     </main>
   );

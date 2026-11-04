@@ -1,5 +1,6 @@
 "use client";
 
+import { Loader2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { addBooks } from "@/lib/store";
 import { CATEGORIES, type BookInput } from "@/lib/types";
@@ -133,8 +134,8 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
       <div className="tile w-full max-w-lg bg-white">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="label-caps">Bulk import</span>
-            <h2 id="import-h" className="mt-1 text-xl font-bold">Add books from Excel or CSV</h2>
+            <span className="eyebrow">Bulk import</span>
+            <h2 id="import-h" className="mt-1 text-xl font-medium">Import from Excel or CSV</h2>
           </div>
           <button onClick={onClose} className="btn-ghost !px-3 !py-1.5" aria-label="Close">✕</button>
         </div>
@@ -142,18 +143,18 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
         {result ? (
           <div className="mt-5">
             <div className="rounded-lg bg-surface p-4">
-              <p className="text-3xl font-bold text-success">+{result.added}</p>
+              <p className="tabular text-[32px] leading-none font-medium text-ink">{result.added}</p>
               <p className="text-sm text-muted">
                 book{result.added === 1 ? "" : "s"} added from <span className="font-medium text-ink">{result.fileName}</span>
               </p>
             </div>
             <div className="mt-3 rounded-lg border border-gray-200 p-3 text-sm">
-              <p className="font-semibold">Columns recognised automatically</p>
+              <p className="font-medium">Columns recognised automatically</p>
               <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
                 {result.detected.map((d) => (
                   <div key={d.field} className="contents">
                     <dt className="text-muted">{FIELD_LABELS[d.field]}</dt>
-                    <dd className="truncate font-medium">← {d.column}</dd>
+                    <dd className="truncate font-mono text-[13px]">{d.column}</dd>
                   </div>
                 ))}
               </dl>
@@ -161,7 +162,7 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
             </div>
             {result.skipped.length > 0 && (
               <div className="mt-3 rounded-lg border border-warning/40 p-3 text-sm">
-                <p className="font-semibold text-warning">{result.skipped.length} row{result.skipped.length === 1 ? "" : "s"} skipped</p>
+                <p className="font-medium text-amber-700">{result.skipped.length} row{result.skipped.length === 1 ? "" : "s"} skipped</p>
                 <ul className="mt-1 max-h-28 overflow-auto text-muted">
                   {result.skipped.map((s) => (
                     <li key={s.row}>Row {s.row}: {s.reason}</li>
@@ -191,8 +192,8 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
                 dragging ? "border-secondary bg-secondary-soft" : "border-gray-300 hover:bg-surface"
               }`}
             >
-              <span aria-hidden className="text-3xl">{busy ? "⏳" : "📄"}</span>
-              <span className="mt-2 font-semibold">{busy ? "Adding books…" : "Drop your file here or click to upload"}</span>
+              {busy ? <Loader2 size={20} strokeWidth={1.5} className="animate-spin text-muted" aria-hidden /> : <Upload size={20} strokeWidth={1.5} className="text-muted" aria-hidden />}
+              <span className="mt-3 font-medium">{busy ? "Adding books…" : "Drop your file here or click to upload"}</span>
               <span className="mt-1 text-xs text-muted">.xlsx, .xls or .csv · books are added automatically</span>
               <input
                 ref={inputRef}
@@ -209,12 +210,12 @@ export default function ImportBooks({ onClose }: { onClose: () => void }) {
             )}
 
             <div className="mt-5 rounded-lg bg-surface p-4 text-sm">
-              <p className="font-semibold">Any column layout works</p>
+              <p className="font-medium">Any column layout works</p>
               <p className="mt-1 text-muted">
                 LibraryHub reads your headings and the data itself to find the <span className="font-medium text-ink">title</span>,{" "}
                 <span className="font-medium text-ink">author</span>, category, copies, year and cover link, in any order, even without a heading row.
               </p>
-              <button onClick={downloadTemplate} className="mt-3 font-semibold text-secondary-ink underline">
+              <button onClick={downloadTemplate} className="mt-3 font-medium text-secondary-ink underline">
                 Download sample CSV
               </button>
             </div>

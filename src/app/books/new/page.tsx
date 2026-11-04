@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
@@ -10,10 +11,10 @@ export default function NewBookPage() {
   const router = useRouter();
   return (
     <AuthGuard>
-      <Link href="/dashboard" className="text-sm font-semibold text-secondary-ink hover:underline">
-        ← Back to dashboard
+      <Link href="/dashboard" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink">
+        <ArrowLeft size={16} strokeWidth={1.5} aria-hidden /> Dashboard
       </Link>
-      <h1 className="mt-3 mb-6 text-[32px] font-bold tracking-tight">Add a new book</h1>
+      <h1 className="mt-3 mb-6 text-[28px] leading-tight font-medium">Add a book</h1>
       <BookForm
         submitLabel="Add book"
         cancelHref="/dashboard"

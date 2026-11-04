@@ -33,19 +33,23 @@ body {
 
 /* Keyboard-first: always-visible focus ring */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 3px solid var(--color-secondary-ink);
+  outline: 2px solid var(--color-secondary-ink);
   outline-offset: 2px;
-  border-radius: 8px;
 }
 
 @utility tile {
   @apply rounded-lg border border-line bg-tile p-6;
 }
-@utility label-caps {
-  @apply font-mono text-xs font-medium tracking-wider text-muted uppercase;
+/* Sentence-case meta label (unslop: no uppercase tracked labels) */
+@utility eyebrow {
+  @apply text-[13px] leading-5 font-medium text-muted;
+}
+/* Mono spine tag: the signature detail, like a library call number */
+@utility spine {
+  @apply font-mono text-xs leading-4 text-muted tabular-nums;
 }
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 h-10 rounded-md px-4 text-sm font-medium active:scale-[0.98] transition-[color,background-color,border-color,transform] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)] disabled:cursor-not-allowed disabled:opacity-50;
 }
 @utility btn-primary {
   @apply btn bg-primary text-ink hover:bg-primary-strong active:bg-primary-strong;
@@ -60,8 +64,15 @@ body {
   @apply btn border border-red-200 bg-tile text-danger hover:bg-red-50;
 }
 @utility field {
-  @apply mt-2 w-full rounded-xl border border-line bg-surface/60 px-4 py-3 text-base text-ink placeholder:text-muted/70 focus:border-secondary focus:bg-white;
+  @apply mt-2 w-full h-11 rounded-md border border-line bg-surface/60 px-3 text-[15px] text-ink placeholder:text-muted/70 focus:border-secondary focus:bg-white;
 }
 @utility field-error {
   @apply border-danger bg-red-50/40;
+}
+
+body {
+  font-feature-settings: "tnum" 0;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
 }

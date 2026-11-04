@@ -1,5 +1,6 @@
 "use client";
 
+import { ArrowLeft, BookX } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
@@ -15,8 +16,8 @@ function EditBook() {
   if (!book) {
     return (
       <section className="tile py-16 text-center">
-        <p aria-hidden className="text-4xl">📕</p>
-        <p className="mt-3 font-semibold">This book doesn&apos;t exist or was deleted.</p>
+        <BookX size={20} strokeWidth={1.5} className="mx-auto text-muted" aria-hidden />
+        <p className="mt-3 font-medium">This book doesn&apos;t exist or was deleted</p>
         <Link href="/dashboard" className="btn-dark mt-5">Back to dashboard</Link>
       </section>
     );
@@ -27,10 +28,10 @@ function EditBook() {
 
   return (
     <>
-      <Link href={`/books/${book.id}`} className="text-sm font-semibold text-secondary-ink hover:underline">
-        ← Back to book
+      <Link href={`/books/${book.id}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink">
+        <ArrowLeft size={16} strokeWidth={1.5} aria-hidden /> Back to book
       </Link>
-      <h1 className="mt-3 mb-6 text-[32px] leading-tight font-bold tracking-tight">Edit “{book.title}”</h1>
+      <h1 className="mt-3 mb-6 text-[28px] leading-tight font-medium">Edit {book.title}</h1>
       <BookForm
         initial={initial}
         submitLabel="Save changes"

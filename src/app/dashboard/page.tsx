@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { ArrowUpRight, FileSpreadsheet, Inbox, Pencil, Plus, Trash2 } from "lucide-react";
 import AuthGuard from "@/components/AuthGuard";
 import BookCover from "@/components/BookCover";
 import ImportBooks from "@/components/ImportBooks";
@@ -56,60 +57,58 @@ function Dashboard() {
 
   const hasFilters = query || category !== "All" || availability !== "all";
 
+  const short = (c: string) => c.replace(/[^A-Za-z]/g, "").slice(0, 3).toUpperCase();
+
   return (
     <>
-      <h1 className="sr-only">Dashboard</h1>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-[28px] leading-tight font-medium">Catalogue</h1>
+          <p className="mt-1 text-sm text-muted">
+            <span className="tabular">{stats.titles}</span> titles · <span className="tabular">{stats.copies}</span> copies
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button type="button" onClick={() => setImportOpen(true)} className="btn-ghost">
+            <FileSpreadsheet size={16} strokeWidth={1.5} aria-hidden />
+            Import from Excel or CSV
+          </button>
+          <Link href="/books/new" className="btn-dark">
+            <Plus size={16} strokeWidth={1.5} aria-hidden />
+            Add book
+          </Link>
+        </div>
+      </div>
 
-      {/* ---------- Stats grid ---------- */}
-      <div className="grid auto-rows-[minmax(120px,auto)] grid-cols-2 gap-4 lg:grid-cols-4">
-        {/* Hero: total books (2x2) */}
-        <section className="tile col-span-2 row-span-2 flex flex-col justify-between bg-primary">
-          <div className="flex items-start justify-between gap-4">
-            <h2 className="label-caps !text-ink/70">Total books</h2>
-            <span aria-hidden className="text-3xl">📚</span>
-          </div>
-          <div>
-            <p className="text-7xl font-bold tracking-tight sm:text-8xl">{stats.titles}</p>
-            <p className="mt-2 text-base text-ink/80">
-              titles in the collection, {stats.copies} copies on the shelves
-            </p>
-          </div>
-        </section>
-
-        {/* Add book CTA */}
-        <Link
-          href="/books/new"
-          className="tile group col-span-2 flex items-center justify-between bg-ink text-white transition-colors hover:bg-gray-800 lg:col-span-2"
-        >
-          <span>
-            <span className="label-caps !text-white/70">Quick action</span>
-            <span className="mt-2 block text-2xl font-bold">Add a new book</span>
-          </span>
-          <span aria-hidden className="grid h-12 w-12 place-items-center rounded-full bg-primary text-2xl text-ink transition-transform group-hover:rotate-90">
-            +
-          </span>
-        </Link>
-
-        {/* Available copies */}
+      {/* ---------- Stats ---------- */}
+      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <section className="tile">
-          <h2 className="label-caps">Available</h2>
-          <p className="mt-3 text-[32px] font-bold text-success">{stats.available}</p>
-          <p className="text-sm text-muted">copies ready to issue</p>
+          <h2 className="eyebrow">Total books</h2>
+          <p className="tabular mt-3 text-[32px] leading-none font-medium">{stats.titles}</p>
+          <p className="mt-2 text-[13px] text-muted">titles in the catalogue</p>
         </section>
-
-        {/* Out of stock */}
         <section className="tile">
-          <h2 className="label-caps">Out of stock</h2>
-          <p className="mt-3 text-[32px] font-bold text-danger">{stats.outOfStock}</p>
-          <p className="text-sm text-muted">titles with no copies left</p>
+          <h2 className="eyebrow">Total copies</h2>
+          <p className="tabular mt-3 text-[32px] leading-none font-medium">{stats.copies}</p>
+          <p className="mt-2 text-[13px] text-muted">across all titles</p>
+        </section>
+        <section className="tile">
+          <h2 className="eyebrow">Available</h2>
+          <p className="tabular mt-3 text-[32px] leading-none font-medium">{stats.available}</p>
+          <p className="mt-2 text-[13px] text-muted">copies ready to issue</p>
+        </section>
+        <section className="tile">
+          <h2 className="eyebrow">Out of stock</h2>
+          <p className={`tabular mt-3 text-[32px] leading-none font-medium ${stats.outOfStock ? "text-danger" : ""}`}>{stats.outOfStock}</p>
+          <p className="mt-2 text-[13px] text-muted">titles with no copies left</p>
         </section>
 
-        {/* Availability meter */}
-        <section className="tile col-span-2 bg-secondary-soft lg:col-span-3">
+        {/* The one rich moment: the shelf */}
+        <section className="tile col-span-2 lg:col-span-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="label-caps !text-secondary-ink">Shelf availability</h2>
-            <p className="text-sm text-secondary-ink">
-              <strong className="text-xl text-ink">{stats.pct}%</strong> of {stats.copies} copies on the shelf
+            <h2 className="eyebrow">Shelf availability</h2>
+            <p className="text-sm text-muted">
+              <span className="tabular text-xl font-medium text-ink">{stats.pct}%</span> of {stats.copies} copies on the shelf
             </p>
           </div>
           <div
@@ -118,32 +117,33 @@ function Dashboard() {
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label="Share of copies available"
-            className="mt-4 h-3 overflow-hidden rounded-full bg-white"
+            className="mt-4 flex h-10 gap-[3px] overflow-hidden"
           >
-            <div className="h-full rounded-full bg-secondary" style={{ width: `${stats.pct}%` }} />
+            {stats.copies > 120 ? (
+              <span className="relative flex-1 rounded-[2px] bg-line">
+                <span className="absolute inset-y-0 left-0 rounded-[2px] bg-secondary" style={{ width: `${stats.pct}%` }} />
+              </span>
+            ) : books.flatMap((b) =>
+              Array.from({ length: b.totalCopies }, (_, i) => (
+                <span
+                  key={`${b.id}-${i}`}
+                  title={`${b.title}: ${i < b.availableCopies ? "on shelf" : "issued"}`}
+                  className={`flex-1 rounded-[2px] ${i < b.availableCopies ? "bg-secondary" : "bg-line"}`}
+                />
+              )),
+            )}
+          </div>
+          <div className="mt-3 flex gap-4 text-[13px] text-muted">
+            <span className="flex items-center gap-1.5"><span aria-hidden className="h-2 w-2 rounded-[2px] bg-secondary" />On shelf</span>
+            <span className="flex items-center gap-1.5"><span aria-hidden className="h-2 w-2 rounded-[2px] bg-line" />Issued</span>
           </div>
         </section>
-
-        {/* Import from Excel / CSV */}
-        <button
-          type="button"
-          onClick={() => setImportOpen(true)}
-          className="tile group col-span-2 flex items-center justify-between gap-3 text-left transition-colors hover:bg-primary lg:col-span-1"
-        >
-          <span>
-            <span className="label-caps">Bulk import</span>
-            <span className="mt-2 block text-lg leading-snug font-bold">Add books from Excel or CSV</span>
-          </span>
-          <span aria-hidden className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-ink text-lg text-white transition-transform group-hover:-translate-y-0.5">
-            ↑
-          </span>
-        </button>
       </div>
 
       {importOpen && <ImportBooks onClose={() => setImportOpen(false)} />}
 
       {/* ---------- Search & filters ---------- */}
-      <section aria-label="Search and filter books" className="tile mt-4 !p-4">
+      <section aria-label="Search and filter books" className="mt-8">
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <label htmlFor="search" className="sr-only">Search books</label>
           <input
@@ -151,11 +151,11 @@ function Dashboard() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by title or author"
-            className="field !mt-0 flex-1"
+            placeholder="Search title or author"
+            className="field !mt-0 flex-1 !bg-tile"
           />
           <label htmlFor="category" className="sr-only">Filter by category</label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} className="field !mt-0 md:w-48">
+          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} className="field !mt-0 !bg-tile md:w-48">
             {categories.map((c) => (
               <option key={c} value={c}>{c === "All" ? "All categories" : c}</option>
             ))}
@@ -165,18 +165,18 @@ function Dashboard() {
             id="availability"
             value={availability}
             onChange={(e) => setAvailability(e.target.value as Availability)}
-            className="field !mt-0 md:w-48"
+            className="field !mt-0 !bg-tile md:w-48"
           >
             <option value="all">Any availability</option>
             <option value="available">Available</option>
             <option value="out">Out of stock</option>
           </select>
         </div>
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm text-muted" aria-live="polite">
-            Showing <strong className="text-ink">{filtered.length}</strong> of {books.length} books
+            Showing <span className="tabular font-medium text-ink">{filtered.length}</span> of {books.length} books
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-1">
             {hasFilters && (
               <button
                 onClick={() => {
@@ -184,7 +184,7 @@ function Dashboard() {
                   setCategory("All");
                   setAvailability("all");
                 }}
-                className="btn-ghost !px-3 !py-1.5"
+                className="btn !h-8 !px-3 text-muted hover:bg-primary hover:text-ink"
               >
                 Clear filters
               </button>
@@ -193,7 +193,7 @@ function Dashboard() {
               onClick={() => {
                 if (confirm("Reset all books to the original sample data?")) resetDemoData();
               }}
-              className="btn-ghost !px-3 !py-1.5"
+              className="btn !h-8 !px-3 text-muted hover:bg-primary hover:text-ink"
             >
               Reset demo data
             </button>
@@ -201,53 +201,59 @@ function Dashboard() {
         </div>
       </section>
 
-      {/* ---------- Books grid ---------- */}
+      {/* ---------- Books ---------- */}
       {filtered.length === 0 ? (
         <section className="tile mt-4 py-16 text-center">
-          <p aria-hidden className="text-4xl">📭</p>
-          <p className="mt-3 font-semibold">
+          <Inbox size={20} strokeWidth={1.5} className="mx-auto text-muted" aria-hidden />
+          <p className="mt-3 font-medium">
             {books.length === 0 ? "No books yet" : "No books match your search"}
           </p>
           <p className="mt-1 text-sm text-muted">
             {books.length === 0 ? (
-              <Link href="/books/new" className="font-semibold text-secondary-ink underline">Add your first book</Link>
+              <Link href="/books/new" className="font-medium text-secondary-ink underline">Add your first book</Link>
             ) : (
-              "Try a different keyword or clear the filters."
+              "Try a different keyword or clear the filters"
             )}
           </p>
         </section>
       ) : (
         <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((b) => (
-            <li key={b.id} className="tile flex flex-col !p-4">
-              <div className="flex gap-4">
-                <BookCover src={b.coverUrl} title={b.title} className="h-32 w-[88px] shrink-0 rounded-xl" />
-                <div className="min-w-0 flex-1">
-                  <span className="label-caps">{b.category}</span>
-                  <h2 className="mt-1 line-clamp-2 text-base leading-snug font-bold">
-                    <Link href={`/books/${b.id}`} className="hover:underline">{b.title}</Link>
-                  </h2>
-                  <p className="mt-0.5 truncate text-sm text-muted">{b.author}</p>
-                  <div className="mt-2">
-                    <StatusBadge book={b} />
+            <li key={b.id} className="tile group relative flex gap-4 !p-4 transition-colors hover:border-ink/20">
+              <BookCover src={b.coverUrl} title={b.title} className="h-[136px] w-[92px] shrink-0 rounded-[4px]" />
+              <div className="flex min-w-0 flex-1 flex-col">
+                <p className="spine">
+                  {short(b.category)} · {b.publishedYear} · {b.availableCopies}/{b.totalCopies}
+                </p>
+                <h2 className="mt-2 line-clamp-2 text-[15px] leading-snug font-semibold">
+                  <Link href={`/books/${b.id}`} className="after:absolute after:inset-0 after:rounded-lg focus-visible:outline-none">
+                    {b.title}
+                  </Link>
+                </h2>
+                <p className="mt-0.5 truncate text-sm text-muted">{b.author}</p>
+                <div className="mt-auto flex items-center justify-between pt-3">
+                  <StatusBadge book={b} />
+                  <div className="relative z-[1] flex gap-1">
+                    <Link
+                      href={`/books/${b.id}/edit`}
+                      className="grid h-8 w-8 place-items-center rounded-md text-muted transition-colors hover:bg-primary hover:text-ink"
+                      aria-label={`Edit ${b.title}`}
+                      title="Edit"
+                    >
+                      <Pencil size={16} strokeWidth={1.5} aria-hidden />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(b)}
+                      className="grid h-8 w-8 place-items-center rounded-md text-muted transition-colors hover:bg-red-50 hover:text-danger"
+                      aria-label={`Delete ${b.title}`}
+                      title="Delete"
+                    >
+                      <Trash2 size={16} strokeWidth={1.5} aria-hidden />
+                    </button>
                   </div>
                 </div>
               </div>
-              <dl className="mt-4 grid grid-cols-2 gap-2 rounded-xl bg-surface p-3 text-center">
-                <div>
-                  <dt className="label-caps !text-[10px]">Year</dt>
-                  <dd className="text-sm font-semibold">{b.publishedYear}</dd>
-                </div>
-                <div>
-                  <dt className="label-caps !text-[10px]">Copies</dt>
-                  <dd className="text-sm font-semibold">{b.availableCopies}/{b.totalCopies}</dd>
-                </div>
-              </dl>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <Link href={`/books/${b.id}`} className="btn-ghost !px-2 !py-2" aria-label={`View ${b.title}`}>View</Link>
-                <Link href={`/books/${b.id}/edit`} className="btn-primary !px-2 !py-2" aria-label={`Edit ${b.title}`}>Edit</Link>
-                <button onClick={() => handleDelete(b)} className="btn-danger !px-2 !py-2" aria-label={`Delete ${b.title}`}>Delete</button>
-              </div>
+              <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden className="absolute top-4 right-4 text-muted opacity-0 transition-opacity group-hover:opacity-100" />
             </li>
           ))}
         </ul>

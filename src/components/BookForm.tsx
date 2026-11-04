@@ -81,7 +81,7 @@ export default function BookForm({
     const err = errors[name];
     return (
       <div>
-        <label htmlFor={id} className="text-sm font-semibold text-ink">
+        <label htmlFor={id} className="text-sm font-medium text-ink">
           {label}
         </label>
         {children({
@@ -109,7 +109,7 @@ export default function BookForm({
     <form onSubmit={handleSubmit} noValidate className="grid gap-4 lg:grid-cols-3">
       {/* Details tile */}
       <section aria-labelledby="details-h" className="tile lg:col-span-2">
-        <h2 id="details-h" className="label-caps">Book details</h2>
+        <h2 id="details-h" className="eyebrow">Book details</h2>
         <div className="mt-4 grid gap-5 sm:grid-cols-2">
           <div className="sm:col-span-2">
             {Field({ label: "Title", name: "title", children: (p) => (
@@ -134,8 +134,8 @@ export default function BookForm({
 
       {/* Cover tile */}
       <section aria-labelledby="cover-h" className="tile flex flex-col bg-primary-soft">
-        <h2 id="cover-h" className="label-caps">Cover</h2>
-        <BookCover key={values.coverUrl} src={values.coverUrl} title={values.title || "New book"} className="mx-auto mt-4 aspect-[2/3] w-36 rounded-xl shadow-md" />
+        <h2 id="cover-h" className="eyebrow">Cover</h2>
+        <BookCover key={values.coverUrl} src={values.coverUrl} title={values.title || "New book"} className="mx-auto mt-4 aspect-[2/3] w-36 rounded-[4px] shadow-[0_8px_24px_rgba(0,0,0,0.08)]" />
         <div className="mt-4">
           {Field({ label: "Image URL (optional)", name: "coverUrl", children: (p) => (
             <input {...p} type="url" value={values.coverUrl} onChange={(e) => set("coverUrl", e.target.value)} placeholder="https://…" />
@@ -145,7 +145,7 @@ export default function BookForm({
 
       {/* Copies tile */}
       <section aria-labelledby="copies-h" className="tile bg-secondary-soft/60 lg:col-span-2">
-        <h2 id="copies-h" className="label-caps">Inventory</h2>
+        <h2 id="copies-h" className="eyebrow">Inventory</h2>
         <div className="mt-4 grid gap-5 sm:grid-cols-2">
           {Field({ label: "Total copies", name: "totalCopies", children: (p) => (
             <input {...p} type="number" min={0} value={num(values.totalCopies)} onChange={(e) => set("totalCopies", parseInt(e.target.value, 10))} />
