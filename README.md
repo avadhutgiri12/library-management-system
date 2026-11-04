@@ -1,4 +1,4 @@
-# 📚 LibraryHub – Library Management System
+# LibraryHub – Library Management System
 
 A demo Library Management System built with **Next.js (App Router)** and **Tailwind CSS**.
 All data is stored in the browser's **localStorage**, so it runs with zero backend setup — perfect for presentations.
